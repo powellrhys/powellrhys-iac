@@ -42,4 +42,8 @@ jobs:
       # Lint python codebase with flake8
       - name: Lint with flake8
         run: |
-          flake8 "${{ inputs.code_directory }}" --config=/path/to/"${{ inputs.config_path }}" --count --show-source --statistics
+          flake8 "${{ inputs.code_directory }}" \
+            --config=/path/to/"${{ inputs.config_path }}" \
+            --count \
+            --show-source \
+            --statistics
