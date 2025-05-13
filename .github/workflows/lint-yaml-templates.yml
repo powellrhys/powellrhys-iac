@@ -12,6 +12,6 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/lint-codebase-template.yml
+    uses: ./github-actoins/lint-yaml-templates.yml
     with:
       config_path: '.yamllint.yml'
