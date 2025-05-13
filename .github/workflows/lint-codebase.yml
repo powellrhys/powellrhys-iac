@@ -1,0 +1,20 @@
+name: Lint Yaml Codebase
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
+
+jobs:
+  lint:
+    name: Lint Codebase
+    steps:
+      - name: Lint Yaml Config
+        uses: ./.github/workflows/template-lint-yaml.yml
+        with:
+          config_path: '.yamllint.yml'
