@@ -11,7 +11,7 @@ on:
       - '**'
 
 jobs:
-  lint:
+  lint-yaml:
     name: Lint Codebase
     uses: ./.github/workflows/template-lint-yaml.yml
     with:

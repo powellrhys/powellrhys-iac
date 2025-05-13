@@ -11,7 +11,7 @@ on:
 
 jobs:
   lint-codebase:
-    name: Lint Codebase
+    name: Lint YAML Codebase
     runs-on: ubuntu-latest
 
     permissions:
