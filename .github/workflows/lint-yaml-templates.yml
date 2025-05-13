@@ -12,6 +12,6 @@ on:
 
 jobs:
   lint:
-    uses: ./github-actoins/lint-yaml-templates.yml
+    uses: ./github-actions/lint-yaml-templates.yml
     with:
       config_path: '.yamllint.yml'
