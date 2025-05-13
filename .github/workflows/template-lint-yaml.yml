@@ -4,9 +4,9 @@ on:
   workflow_call:
     inputs:
       config_path:
-      description: 'Path to yamllint config file'
-      required: false
-      default: '.yamllint.yml'
+        description: 'Path to yamllint config file'
+        required: false
+        default: '.yamllint.yml'
 
 jobs:
   lint-codebase:
