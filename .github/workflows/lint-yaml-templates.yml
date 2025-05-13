@@ -2,16 +2,16 @@ name: Lint Yaml Codebase
 
 on:
   push:
-    paths:
-      - '**.yml'
-      - '**.yaml'
+    branches:
+      - 'feature/**'
+
   pull_request:
-    paths:
-      - '**.yml'
-      - '**.yaml'
+    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
 
 jobs:
   lint:
     uses: ./.github/workflows/lint-codebase-template.yml
     with:
-      config_path: '.yamllint.yml'  # optional if your workflow template already defaults to this
+      config_path: '.yamllint.yml'
