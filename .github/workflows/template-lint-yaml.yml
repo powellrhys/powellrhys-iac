@@ -7,6 +7,7 @@ on:
         description: 'Path to yamllint config file'
         required: false
         default: '.yamllint.yml'
+        type: string
 
 jobs:
   lint-codebase:
