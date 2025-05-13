@@ -1,4 +1,4 @@
-name: Lint Yaml Templates
+name: Template - Lint Yaml Codebase
 
 on:
   workflow_call:
