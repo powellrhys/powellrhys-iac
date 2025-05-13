@@ -13,10 +13,6 @@ on:
 jobs:
   lint:
     name: Lint Codebase
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Lint Yaml Config
-        uses: ./.github/workflows/template-lint-yaml.yml
-        with:
-          config_path: '.yamllint.yml'
+    uses: ./.github/workflows/template-lint-yaml.yml
+    with:
+      config_path: '.yamllint.yml'
