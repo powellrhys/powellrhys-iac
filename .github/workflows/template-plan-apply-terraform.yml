@@ -2,6 +2,9 @@ name: Template - Plan & Apply Terraform
 
 on:
   workflow_call:
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
     inputs:
       tf_state_container_name:
         description: 'Path to yamllint config file'
