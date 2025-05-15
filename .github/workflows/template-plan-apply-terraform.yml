@@ -33,6 +33,9 @@ jobs:
       packages: read
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
       - name: Azure Login
         uses: azure/login@v1
         with:
