@@ -10,8 +10,8 @@ on:
         type: string
 
 jobs:
-  lint-codebase:
-    name: Lint YAML Codebase
+  terraform:
+    name: Terraform
     runs-on: ubuntu-latest
 
     permissions:
