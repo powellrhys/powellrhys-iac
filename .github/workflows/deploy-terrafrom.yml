@@ -15,4 +15,4 @@ jobs:
     name: Terraform Plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
-      config_path: 'tfstate'
+      tf_state_container_name: 'tfstate'
