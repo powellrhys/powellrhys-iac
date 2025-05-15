@@ -17,4 +17,7 @@ jobs:
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
     with:
-      tf_state_container_name: 'tfstate'
+      tf_state_resource_group_name: tfstate-rg
+      tf_state_storage_account: powellrhystfstate
+      tf_state_container_name: tfstate
+      tf_state_key: powellrhys
