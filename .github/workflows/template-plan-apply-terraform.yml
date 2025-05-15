@@ -1,0 +1,25 @@
+name: Template - Plan & Apply Terraform
+
+on:
+  workflow_call:
+    inputs:
+      tf_state_container_name:
+        description: 'Path to yamllint config file'
+        required: false
+        default: '.yamllint.yml'
+        type: string
+
+jobs:
+  lint-codebase:
+    name: Lint YAML Codebase
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
