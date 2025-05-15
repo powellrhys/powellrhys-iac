@@ -12,12 +12,9 @@ on:
 
 jobs:
   plan:
-    steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # name: Terraform Plan
-    # uses: ./.github/workflows/template-plan-apply-terraform.yml
-    # with:
-    #   tf_state_container_name: 'tfstate'
+    name: Terraform Plan
+    uses: ./.github/workflows/template-plan-apply-terraform.yml
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
+    with:
+      confitf_state_container_nameg_path: 'tfstate'
