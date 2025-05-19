@@ -55,7 +55,6 @@ jobs:
           echo "ARM_TENANT_ID=$(jq -r .tenantId azurecreds.json)" >> $GITHUB_ENV
         shell: bash
 
-
       - name: Terraform Init
         run: |
           terraform init \
@@ -64,3 +63,5 @@ jobs:
             -backend-config="container_name=${{ inputs.tf_state_container_name }}" \
             -backend-config="key=${{ inputs.tf_state_key }}"
 
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
