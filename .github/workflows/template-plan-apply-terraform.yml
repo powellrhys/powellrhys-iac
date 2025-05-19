@@ -24,7 +24,6 @@ on:
         type: string
       release_environment:
         description: 'Github environment for release'
-        required: true
         default: 'PROD'
         type: string
 
