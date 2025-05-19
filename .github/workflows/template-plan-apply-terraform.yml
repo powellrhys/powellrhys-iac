@@ -22,9 +22,14 @@ on:
         description: 'Terraform state file key'
         required: true
         type: string
+      release_environment:
+        description: 'Github environment for release'
+        required: true
+        default: 'PROD'
+        type: string
 
 jobs:
-  terraform:
+  terraform-plan:
     name: Terraform
     runs-on: ubuntu-latest
 
@@ -65,3 +70,38 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: tfplan
+
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.AZURE_CREDENTIALS }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.6.2
+
+      - name: Download tfplan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+          path: .
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
