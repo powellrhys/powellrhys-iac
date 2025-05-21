@@ -12,9 +12,13 @@ variable "storage_account_name" {
   }
 }
 
-
 variable "storage_account_location" {
   description = "Storage Account Location"
   type        = string
 }
 
+variable "storage_containers" {
+  description = "List of storage container names to create"
+  type        = list(string)
+  default     = []
+}

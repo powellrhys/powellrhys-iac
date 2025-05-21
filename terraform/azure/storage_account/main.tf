@@ -12,3 +12,10 @@ resource "azurerm_storage_account" "storage_account" {
   access_tier              = "Cool"
   enable_https_traffic_only = true      
 }
+
+resource "azurerm_storage_container" "this" {
+  for_each              = toset(var.storage_containers)
+  name                  = each.value
+  storage_account_id    = azurerm_storage_account.example.id
+  container_access_type = "private"
+}
