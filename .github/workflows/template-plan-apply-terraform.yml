@@ -82,6 +82,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.release_environment }}
 
+    permissions:
+      actions: read
+      contents: read
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
