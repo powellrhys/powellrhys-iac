@@ -17,6 +17,5 @@ resource "azurerm_storage_container" "containers" {
   for_each              = toset(var.storage_containers)
   name                  = each.value
   storage_account_name  = azurerm_storage_account.storage_account.name
-  resource_group_name   = azurerm_resource_group.storage_account_rg.name
   container_access_type = "private"
 }
