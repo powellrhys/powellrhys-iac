@@ -80,7 +80,7 @@ jobs:
     name: Terraform Apply
     needs: terraform-plan
     runs-on: ubuntu-latest
-    environment: ${{ inputs.AZURE_CREDENTIALS }}
+    environment: ${{ inputs.release_environment }}
 
     steps:
       - name: Checkout repo
