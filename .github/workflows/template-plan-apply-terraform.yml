@@ -83,7 +83,6 @@ jobs:
     environment: ${{ inputs.release_environment }}
 
     permissions:
-      actions: read
       contents: read
       packages: read
 
