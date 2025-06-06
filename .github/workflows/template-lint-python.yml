@@ -14,7 +14,6 @@ on:
         default: '.'
         type: string
 
-
 jobs:
   lint-codebase:
     name: Lint Python Codebase

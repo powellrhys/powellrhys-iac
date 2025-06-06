@@ -1,0 +1,36 @@
+name: Template - Lint Python Codebase
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: 'Name of docker image'
+        required: true
+        type: string
+      docker_file_path:
+        description: 'Path to docker file'
+        required: true
+        type: string
+
+jobs:
+  build-and-push-container:
+    runs-on: ubuntu-latest
+    name: Build and Push Container
+    steps:
+
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Login to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push backend image to Docker Hub
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t ${{ github.actor }}/${{ inputs.image_name }} -f ${{ inputs.docker_file_path }}
+          docker push ${{ github.actor }}/${{ inputs.image_name }}:latest
