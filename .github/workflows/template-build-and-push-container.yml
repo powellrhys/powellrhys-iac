@@ -1,7 +1,10 @@
-name: Template - Lint Python Codebase
+name: Template - Build Docker Image
 
 on:
   workflow_call:
+    secrets:
+      docker_password:
+        required: true
     inputs:
       image_name:
         description: 'Name of docker image'
@@ -27,7 +30,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.docker_password }}
 
       # Build and push backend image to Docker Hub
       - name: Build and Push Backend Image
