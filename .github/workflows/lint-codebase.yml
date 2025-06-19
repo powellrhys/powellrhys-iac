@@ -13,6 +13,6 @@ on:
 jobs:
   lint-yaml:
     name: Lint Codebase
-    uses: ./.github/workflows/template-lint-yaml.yml
+    uses: ./.github/actions/template-lint-yaml.yml
     with:
       config_path: '.yamllint.yml'
