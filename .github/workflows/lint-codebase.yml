@@ -11,8 +11,9 @@ on:
       - '**'
 
 jobs:
-  lint-yaml:
-    name: Lint Codebase
-    uses: ./.github/actions/template-lint-yaml.yml
-    with:
-      config_path: '.yamllint.yml'
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/lint-yaml
+        with:
+          config_path: .yamllint.yml

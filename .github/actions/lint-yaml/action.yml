@@ -1,0 +1,24 @@
+name: Lint YAML
+description: A composite action to lint YAML files using yamllint
+
+inputs:
+  config_path:
+    description: Path to yamllint configuration file
+    required: false
+    default: .yamllint.yml
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install yamllint
+      run: pip install yamllint
+
+    - name: Lint YAML files
+      run: yamllint -c ${{ inputs.config_path }} .
