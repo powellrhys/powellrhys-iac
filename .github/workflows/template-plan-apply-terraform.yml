@@ -6,22 +6,22 @@ on:
       AZURE_CREDENTIALS:
         required: true
     inputs:
-      tf_state_resource_group_name:
-        description: 'Blob storage resource group'
-        required: true
-        type: string
-      tf_state_storage_account:
-        description: 'Blob storage storage account name'
-        required: true
-        type: string
-      tf_state_container_name:
-        description: 'Blob storage container name'
-        required: true
-        type: string
-      tf_state_key:
-        description: 'Terraform state file key'
-        required: true
-        type: string
+      # tf_state_resource_group_name:
+      #   description: 'Blob storage resource group'
+      #   required: true
+      #   type: string
+      # tf_state_storage_account:
+      #   description: 'Blob storage storage account name'
+      #   required: true
+      #   type: string
+      # tf_state_container_name:
+      #   description: 'Blob storage container name'
+      #   required: true
+      #   type: string
+      # tf_state_key:
+      #   description: 'Terraform state file key'
+      #   required: true
+      #   type: string
       release_environment:
         description: 'GitHub environment for release'
         default: ''
@@ -72,11 +72,11 @@ jobs:
       - name: Terraform Init
         run: |
           terraform \
-          -chdir="${{ inputs.tf_directory }}" init \
-          -backend-config="resource_group_name=${{ inputs.tf_state_resource_group_name }}" \
-          -backend-config="storage_account_name=${{ inputs.tf_state_storage_account }}" \
-          -backend-config="container_name=${{ inputs.tf_state_container_name }}" \
-          -backend-config="key=${{ inputs.tf_state_key }}"
+          -chdir="${{ inputs.tf_directory }}" init
+          # -backend-config="resource_group_name=${{ inputs.tf_state_resource_group_name }}" \
+          # -backend-config="storage_account_name=${{ inputs.tf_state_storage_account }}" \
+          # -backend-config="container_name=${{ inputs.tf_state_container_name }}" \
+          # -backend-config="key=${{ inputs.tf_state_key }}"
 
       - name: Terraform Validate
         run: terraform -chdir="${{ inputs.tf_directory }}" validate
