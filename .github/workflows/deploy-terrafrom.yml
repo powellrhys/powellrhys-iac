@@ -12,7 +12,7 @@ on:
 
 jobs:
   terraform:
-    uses: ./.github/workflows/terraform-plan-apply.yml
+    uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
       tf_state_resource_group_name: tfstate-rg
       tf_state_storage_account: powellrhystfstate
