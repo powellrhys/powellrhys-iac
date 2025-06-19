@@ -1,0 +1,34 @@
+name: Build and Push Docker Image
+description: Build and push a Docker image to Docker Hub
+
+inputs:
+  image_name:
+    description: Name of the Docker image
+    required: true
+
+  docker_file_path:
+    description: Path to the Dockerfile
+    required: true
+
+  docker_password:
+    description: Docker Hub password (passed as an input since composite actions can’t access secrets directly)
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ github.actor }}
+        password: ${{ inputs.docker_password }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ github.actor }}/${{ inputs.image_name }} \
+                     -f ${{ inputs.docker_file_path }} .
+        docker push ${{ github.actor }}/${{ inputs.image_name }}:latest
+      shell: pwsh
