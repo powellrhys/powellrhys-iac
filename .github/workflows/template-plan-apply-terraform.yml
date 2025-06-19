@@ -35,7 +35,6 @@ jobs:
   terraform:
     name: Terraform Plan & (Optionally) Apply
     runs-on: ubuntu-latest
-    environment: ${{ inputs.release_environment }}
 
     permissions:
       contents: read

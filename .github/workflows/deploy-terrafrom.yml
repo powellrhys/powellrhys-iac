@@ -11,7 +11,7 @@ on:
       - '**'
 
 jobs:
-  terraform:
+  plan:
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
       tf_state_resource_group_name: tfstate-rg
@@ -19,6 +19,18 @@ jobs:
       tf_state_container_name: tfstate
       tf_state_key: powellrhys.tfstate
       should_apply: 'false'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+  apply:
+    uses: ./.github/workflows/template-plan-apply-terraform.yml
+    environment: PROD
+    with:
+      tf_state_resource_group_name: tfstate-rg
+      tf_state_storage_account: powellrhystfstate
+      tf_state_container_name: tfstate
+      tf_state_key: powellrhys.tfstate
+      should_apply: 'true'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
