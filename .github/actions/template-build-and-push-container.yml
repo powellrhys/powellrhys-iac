@@ -35,5 +35,6 @@ jobs:
       # Build and push backend image to Docker Hub
       - name: Build and Push Backend Image
         run: |
-          docker build -t ${{ github.actor }}/${{ inputs.image_name }} -f ${{ inputs.docker_file_path }} .
+          docker build -t `${{ github.actor }}/${{ inputs.image_name }} `
+                       -f ${{ inputs.docker_file_path }} .
           docker push ${{ github.actor }}/${{ inputs.image_name }}:latest
