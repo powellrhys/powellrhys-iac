@@ -12,6 +12,7 @@ on:
 
 jobs:
   lint:
+    name: Lint Yaml
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
