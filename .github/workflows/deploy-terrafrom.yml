@@ -23,7 +23,6 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
   apply:
-    environment: PROD
     needs: plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
@@ -32,6 +31,7 @@ jobs:
       tf_state_container_name: tfstate
       tf_state_key: powellrhys.tfstate
       should_apply: 'true'
+      release_environment: 'PROD'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 

@@ -24,7 +24,7 @@ on:
         type: string
       release_environment:
         description: 'GitHub environment for release'
-        default: 'PROD'
+        default: ''
         type: string
       should_apply:
         description: 'Whether to apply the plan'
@@ -35,6 +35,7 @@ jobs:
   terraform:
     name: Terraform Plan & (Optionally) Apply
     runs-on: ubuntu-latest
+    environment: ${{ inputs.release_environment }}
 
     permissions:
       contents: read
