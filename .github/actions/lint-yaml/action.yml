@@ -1,6 +1,5 @@
 name: Lint YAML
-description: A composite action to lint YAML files using yamllint
-
+description: Lint YAML files using yamllint with PowerShell
 inputs:
   config_path:
     description: Path to yamllint configuration file
@@ -12,13 +11,16 @@ runs:
   steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
     - name: Install yamllint
-      run: pip install yamllint
+      run: |
+        pip install yamllint
+      shell: pwsh
 
-    - name: Lint YAML files
-      run: yamllint -c ${{ inputs.config_path }} .
+    - name: Run yamllint
+      run: |
+        yamllint -c ${{ inputs.config_path }} .
+      shell: pwsh
