@@ -20,6 +20,7 @@ jobs:
       tf_state_container_name: tfstate
       tf_state_key: powellrhys.tfstate
       should_apply: 'false'
+      tf_directory: 'infra'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -34,17 +35,6 @@ jobs:
       tf_state_key: powellrhys.tfstate
       should_apply: 'true'
       release_environment: 'PROD'
+      tf_directory: 'infra'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
-# jobs:
-#   plan:
-#     name: Terraform Plan
-#     uses: ./.github/actions/template-plan-apply-terraform.yml
-#     secrets:
-#       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-#     with:
-#       tf_state_resource_group_name: tfstate-rg
-#       tf_state_storage_account: powellrhystfstate
-#       tf_state_container_name: tfstate
-#       tf_state_key: powellrhys.tfstate

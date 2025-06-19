@@ -29,7 +29,12 @@ on:
       should_apply:
         description: 'Whether to apply the plan'
         default: 'false'
-        type: string  # Must be string for conditionals
+        type: string
+      tf_directory:
+        description: 'Terraform code directory'
+        required: false
+        default: '.'
+        type: string
 
 jobs:
   terraform:
@@ -65,19 +70,19 @@ jobs:
         shell: bash
 
       - name: Terraform Init
-        run: |
-          terraform init \
-            -backend-config="resource_group_name=${{ inputs.tf_state_resource_group_name }}" \
-            -backend-config="storage_account_name=${{ inputs.tf_state_storage_account }}" \
-            -backend-config="container_name=${{ inputs.tf_state_container_name }}" \
-            -backend-config="key=${{ inputs.tf_state_key }}"
+        run: terraform \
+          -chdir=${{ inputs.tf_directory }} init \
+          -backend-config="resource_group_name=${{ inputs.tf_state_resource_group_name }}" \
+          -backend-config="storage_account_name=${{ inputs.tf_state_storage_account }}" \
+          -backend-config="container_name=${{ inputs.tf_state_container_name }}" \
+          -backend-config="key=${{ inputs.tf_state_key }}"
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform -chdir=${{ inputs.tf_directory }} plan -out=tfplan
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
-        run: terraform apply tfplan
+        run: terraform -chdir=${{ inputs.tf_directory }} apply tfplan
 
 
 # name: Template - Plan & Apply Terraform
