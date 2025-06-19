@@ -33,7 +33,7 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Plan & (Optionally) Apply
+    name: Terraform
     runs-on: ubuntu-latest
     environment: ${{ inputs.release_environment }}
 

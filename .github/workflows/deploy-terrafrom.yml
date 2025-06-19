@@ -12,6 +12,7 @@ on:
 
 jobs:
   plan:
+    name: Plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
       tf_state_resource_group_name: tfstate-rg
@@ -24,6 +25,7 @@ jobs:
 
   apply:
     needs: plan
+    name: Apply
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
       tf_state_resource_group_name: tfstate-rg
