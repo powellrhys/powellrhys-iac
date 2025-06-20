@@ -1,5 +1,6 @@
 name: Lint Yaml Codebase
 
+# Define trigger criteria
 on:
   push:
     branches:
@@ -15,8 +16,10 @@ jobs:
     name: Lint Yaml
     runs-on: ubuntu-latest
     steps:
+      # Checkout repository
       - uses: actions/checkout@v3
 
+      # Execute linting action
       - uses: ./.github/actions/lint-yaml
         with:
           config_path: .yamllint.yml

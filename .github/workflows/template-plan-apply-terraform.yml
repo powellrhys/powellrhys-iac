@@ -1,5 +1,6 @@
 name: Terraform Plan & Apply
 
+# Define workflow call and input parameters and secrets
 on:
   workflow_call:
     secrets:
@@ -10,10 +11,12 @@ on:
         description: 'GitHub environment for release'
         default: ''
         type: string
+
       should_apply:
         description: 'Whether to apply the plan'
         default: 'false'
         type: string
+
       tf_directory:
         description: 'Terraform code directory'
         required: false
@@ -25,25 +28,28 @@ jobs:
     name: Terraform
     runs-on: ubuntu-latest
     environment: ${{ inputs.release_environment }}
-
     permissions:
       contents: read
       packages: read
 
     steps:
+      # Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # Login to azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Setup terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.2
 
+      # Collect azure credentials for terraform remote config
       - name: Export Azure credentials for Terraform
         run: |
           echo '${{ secrets.AZURE_CREDENTIALS }}' > azurecreds.json
@@ -53,16 +59,20 @@ jobs:
           echo "ARM_TENANT_ID=$(jq -r .tenantId azurecreds.json)" >> $GITHUB_ENV
         shell: bash
 
+      # Initialize terraform
       - name: Terraform Init
         run: |
           terraform -chdir="${{ inputs.tf_directory }}" init
 
+      # Validate terraform
       - name: Terraform Validate
         run: terraform -chdir="${{ inputs.tf_directory }}" validate
 
+      # Plan terraform
       - name: Terraform Plan
         run: terraform -chdir="${{ inputs.tf_directory }}" plan -out=tfplan
 
+      # Apply terraform
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
         run: terraform -chdir="${{ inputs.tf_directory }}" apply tfplan

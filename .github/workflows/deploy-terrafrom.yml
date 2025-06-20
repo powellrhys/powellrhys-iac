@@ -1,5 +1,6 @@
 name: Deploy Terraform
 
+# Define pipeline trigger criteria
 on:
   workflow_dispatch:
   push:
@@ -11,6 +12,7 @@ on:
       - 'feature/**'
 
 jobs:
+  # Execute plan
   plan:
     name: Plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
@@ -19,6 +21,7 @@ jobs:
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+  # Execute apply
   apply:
     needs: plan
     name: Apply
