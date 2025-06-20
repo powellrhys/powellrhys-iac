@@ -10,7 +10,7 @@ module "storage_account" {
     ]
 }
 
-module "storage_account" {
+module "app_service_plan" {
   source = "../terraform/azure/app_service_plan"
 
     resource_group_name      = "powellrhys-app-service-plan-rg"

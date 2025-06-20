@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "storage_account_rg" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
-    depends_on               = azurerm_resource_group.storage_account_rg
+    depends_on               = [azurerm_resource_group.storage_account_rg]
     name                     = var.storage_account_name
     resource_group_name      = azurerm_resource_group.storage_account_rg.name
     location                 = azurerm_resource_group.storage_account_rg.locations
@@ -19,7 +19,7 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 resource "azurerm_storage_container" "containers" {
-    depends_on            = azurerm_storage_account.storage_account
+    depends_on            = [azurerm_storage_account.storage_account]
     for_each              = toset(var.storage_containers)
     name                  = each.value
     storage_account_name  = azurerm_storage_account.storage_account.name
