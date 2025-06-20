@@ -36,9 +36,9 @@ runs:
     # Execute linting command
     - name: Run flake8
       run: |
-        flake8 ${{ inputs.code_directory }} \
-          --config=${{ inputs.config_path }} \
-          --count \
-          --show-source \
+        flake8 ${{ inputs.code_directory }} `
+          --config=${{ inputs.config_path }} `
+          --count `
+          --show-source `
           --statistics
       shell: pwsh
