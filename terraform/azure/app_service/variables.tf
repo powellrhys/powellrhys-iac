@@ -1,4 +1,4 @@
-variable "web_app_name" {
+variable "app_service_name" {
   description = "Name of Web App"
   type        = string
 }
