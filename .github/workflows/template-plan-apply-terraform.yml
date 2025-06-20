@@ -75,6 +75,7 @@ jobs:
 
       # Plan terraform
       - name: Terraform Plan
+        shell: pwsh
         run: |
           terraform `
               -chdir="${{ inputs.tf_directory }}" plan `
