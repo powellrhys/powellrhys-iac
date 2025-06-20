@@ -23,6 +23,11 @@ on:
         default: '.'
         type: string
 
+      tf_vars_file_name:
+        description: 'Name of tfvars file'
+        required: false
+        type: string
+
 jobs:
   terraform:
     name: Terraform
@@ -70,7 +75,11 @@ jobs:
 
       # Plan terraform
       - name: Terraform Plan
-        run: terraform -chdir="${{ inputs.tf_directory }}" plan -out=tfplan
+        run: |
+          terraform `
+              -chdir="${{ inputs.tf_directory }}" plan `
+              -var-file="${{ inputs.tf_vars_file_name }}" -out=tfplan
+
 
       # Apply terraform
       - name: Terraform Apply (if enabled)
