@@ -12,10 +12,6 @@ resource "azurerm_storage_account" "storage_account" {
     account_replication_type = "LRS"
     access_tier              = "Cool"
     enable_https_traffic_only = true
-
-    depends_on = [
-      azurerm_resource_group.storage_account_rg
-    ]
 }
 
 resource "azurerm_storage_container" "containers" {
