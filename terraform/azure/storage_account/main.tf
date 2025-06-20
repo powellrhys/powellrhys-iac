@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "storage_account" {
     depends_on               = [azurerm_resource_group.storage_account_rg]
     name                     = var.storage_account_name
     resource_group_name      = azurerm_resource_group.storage_account_rg.name
-    location                 = azurerm_resource_group.storage_account_rg.locations
+    location                 = azurerm_resource_group.storage_account_rg.location
     account_tier             = "Standard"
     account_replication_type = "LRS"
     access_tier              = "Cool"
