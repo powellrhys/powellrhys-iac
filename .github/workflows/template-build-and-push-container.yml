@@ -22,6 +22,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    name: Build and Push Container
     steps:
       # Checkout code
       - name: Checkout Code
@@ -37,7 +38,8 @@ jobs:
       # Build and push container to dockerhub
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ github.actor }}/${{ inputs.image_name }} \
+          docker build -t ${{ github.actor }}/${{ inputs.image_name }} `
                        -f ${{ inputs.docker_file_path }} .
+
           docker push ${{ github.actor }}/${{ inputs.image_name }}:latest
         shell: pwsh
