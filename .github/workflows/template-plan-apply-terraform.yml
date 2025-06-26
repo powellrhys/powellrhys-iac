@@ -81,7 +81,7 @@ jobs:
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
             -var-file="${{ inputs.tf_vars_file_name }}" -out=tfplan
-      
+
       # Terraform plan without var file
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
