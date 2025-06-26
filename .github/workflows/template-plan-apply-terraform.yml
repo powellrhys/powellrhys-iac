@@ -73,14 +73,18 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir="${{ inputs.tf_directory }}" validate
 
-      # Plan terraform
+      # Run terraform plan
       - name: Terraform Plan
         shell: pwsh
         run: |
-          terraform `
-              -chdir="${{ inputs.tf_directory }}" plan `
-              -var-file="${{ inputs.tf_vars_file_name }}" -out=tfplan
+          $varFileArg = ""
+          if ("${{ inputs.tf_vars_file_name }}" -ne "") {
+            $varFileArg = "-var-file='${{ inputs.tf_vars_file_name }}'"
+          }
 
+          terraform `
+            -chdir="${{ inputs.tf_directory }}" plan `
+            $varFileArg -out=tfplan
 
       # Apply terraform
       - name: Terraform Apply (if enabled)
