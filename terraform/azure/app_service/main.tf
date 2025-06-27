@@ -12,5 +12,5 @@ resource "azurerm_linux_web_app" "app-service" {
     }
   }
 
-  app_settings = var.app_settings
+  app_settings = var.app_service_app_settings
 }

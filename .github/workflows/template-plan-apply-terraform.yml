@@ -28,6 +28,11 @@ on:
         required: false
         type: string
 
+      app_service_app_settings:
+        description: 'App Service application settings in JSON string format'
+        required: false
+        type: string
+
 jobs:
   terraform:
     name: Terraform
@@ -80,14 +85,19 @@ jobs:
         run: |
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
-            -var-file="${{ inputs.tf_vars_file_name }}" -out=tfplan
+            -var-file="${{ inputs.tf_vars_file_name }}" `
+            -var="app_service_app_settings=${{ inputs.app_service_app_settings }}" `
+            -out=tfplan
 
       # Terraform plan without var file
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
         shell: pwsh
         run: |
-          terraform -chdir="${{ inputs.tf_directory }}" plan -out=tfplan
+          terraform `
+            -chdir="${{ inputs.tf_directory }}" plan `
+            -var="app_service_app_settings=${{ inputs.app_service_app_settings }}" `
+            -out=tfplan
 
       # Apply terraform
       - name: Terraform Apply (if enabled)
