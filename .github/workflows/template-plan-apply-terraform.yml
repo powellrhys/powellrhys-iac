@@ -10,7 +10,6 @@ on:
       app_service_app_settings:
         description: 'App Service application settings in JSON string format'
         required: false
-        type: string
     inputs:
       release_environment:
         description: 'GitHub environment for release'
