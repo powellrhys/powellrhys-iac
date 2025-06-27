@@ -6,7 +6,7 @@ on:
     secrets:
       AZURE_CREDENTIALS:
         required: true
-      
+
       app_service_app_settings:
         description: 'App Service application settings in JSON string format'
         required: false
