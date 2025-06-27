@@ -94,9 +94,10 @@ jobs:
         if: inputs.tf_vars_file_name == ''
         shell: pwsh
         run: |
+          $appSettings = '${{ secrets.app_service_app_settings }}'
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
-            -var="app_service_app_settings=${{ secrets.app_service_app_settings }}" `
+            -var "app_service_app_settings=$appSettings" `
             -out=tfplan
 
       # Apply terraform
