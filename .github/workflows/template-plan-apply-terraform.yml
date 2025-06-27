@@ -6,6 +6,11 @@ on:
     secrets:
       AZURE_CREDENTIALS:
         required: true
+      
+      app_service_app_settings:
+        description: 'App Service application settings in JSON string format'
+        required: false
+        type: string
     inputs:
       release_environment:
         description: 'GitHub environment for release'
@@ -25,11 +30,6 @@ on:
 
       tf_vars_file_name:
         description: 'Name of tfvars file'
-        required: false
-        type: string
-
-      app_service_app_settings:
-        description: 'App Service application settings in JSON string format'
         required: false
         type: string
 
@@ -86,7 +86,7 @@ jobs:
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
             -var-file="${{ inputs.tf_vars_file_name }}" `
-            -var="app_service_app_settings=${{ inputs.app_service_app_settings }}" `
+            -var="app_service_app_settings=${{ secrets.app_service_app_settings }}" `
             -out=tfplan
 
       # Terraform plan without var file
@@ -96,7 +96,7 @@ jobs:
         run: |
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
-            -var="app_service_app_settings=${{ inputs.app_service_app_settings }}" `
+            -var="app_service_app_settings=${{ secrets.app_service_app_settings }}" `
             -out=tfplan
 
       # Apply terraform
