@@ -28,7 +28,8 @@ variable "docker_image_tag" {
   type        = string
 }
 
-variable "app_settings" {
+variable "app_service_app_settings" {
   description = "Web App app settings"
   type        = map(string)
+  sensitive   = true
 }
