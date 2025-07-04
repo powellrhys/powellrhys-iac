@@ -1,0 +1,33 @@
+name: "Run Behave BDD Tests"
+description: "Checks out code, sets up Python, installs dependencies, and runs Behave tests."
+inputs:
+  features-path:
+    description: "Path to the Behave features directory"
+    required: false
+    default: "features"
+
+  requirements-path:
+    description: "Path to the requirements.txt file"
+    required: false
+    default: "requirements.txt"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ${{ inputs.requirements-path }}
+      shell: bash
+
+    - name: Run Behave tests
+      run: behave ${{ inputs.features-path }} --format=plain --outfile=behave.log
+      shell: bash
