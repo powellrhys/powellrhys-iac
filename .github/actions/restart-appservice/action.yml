@@ -1,0 +1,48 @@
+name: 'Restart Azure Web App'
+description: 'Stops and restarts an Azure Web App'
+
+# Action inputs
+inputs:
+  azure_credentials:
+    description: 'Azure credentials JSON'
+    required: true
+  webapp_name:
+    description: 'Azure Web App name'
+    required: true
+  resource_group:
+    description: 'Azure Resource Group'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # Checkout codebase
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Login to azure
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ inputs.azure_credentials }}
+
+    # Stop app service
+    - name: Stop Azure Web App
+      shell: bash
+      run: |
+        az webapp stop \
+        --name ${{ inputs.webapp_name }} \
+        --resource-group ${{ inputs.resource_group }}
+
+    # Pause to make sure app service is fully stopped
+    - name: Wait for webapp to stop
+      shell: bash
+      run: sleep 10
+
+    # Start application
+    - name: Start Azure Web App
+      shell: bash
+      run: |
+        az webapp start \
+        --name ${{ inputs.webapp_name }} \
+        --resource-group ${{ inputs.resource_group }}
