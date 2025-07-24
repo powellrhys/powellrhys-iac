@@ -22,6 +22,7 @@ This repository is your central infrastructure hub, hosting reusable GitHub Acti
 │       └── app_service/            # Terraform module for app service
 │       └── app_service_plan/       # Terraform module for app service plans
 │       └── storage_account/        # Terraform module for blob storage
+│       └── sql_server/             # Terraform module for sql server & databases
 ├── infra/
 │   └── azure/                      # Entry point to provision common resources
 └── README.md                       # (You are here)
@@ -49,4 +50,5 @@ Under terraform/azure, you'll find reusable modules:
 
 - `app_service` - Creates App Service to host one applications.
 - `app_service_plan` - Creates App Service Plans to host one or more App Services.
-- `storage_account` - Defines Azure Blob Storage accounts for project data storage.
+- `storage_account` - Creates Azure Blob Storage accounts for project data storage.
+- `sql_server` - Creates sql server and supporting databases.
