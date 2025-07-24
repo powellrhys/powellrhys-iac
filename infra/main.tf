@@ -6,12 +6,13 @@ module "storage_account" {
     storage_account_location = var.location
     storage_containers = [
         "play-cricket",
-        "strava"
+        "strava",
+        "fantasy-premier-league"
     ]
 }
 
 module "app_service_plan" {
-  source = "../terraform/azure/app_service_plan"
+    source = "../terraform/azure/app_service_plan"
 
     resource_group_name       = "powellrhys-app-service-plan-rg"
     app_service_plan_name     = "applications"
