@@ -20,8 +20,8 @@ resource "random_password" "admin_password" {
 
 resource "azurerm_sql_server" "sql_server" {
   name                         = var.sql_server_name
-  resource_group_name          = var.sql_server_resource_group_name
-  location                     = var.sql_server_location
+  resource_group_name          = azurerm_resource_group.sql_server_rg.name
+  location                     = azurerm_resource_group.sql_server_rg.location
   version                      = "12.0"
   administrator_login          = "sqladmin"
   administrator_login_password = random_password.admin_password.result
@@ -30,8 +30,8 @@ resource "azurerm_sql_server" "sql_server" {
 resource "azurerm_sql_database" "sql_database" {
   for_each            = toset(var.sql_server_database_names)
   name                = each.value
-  resource_group_name = var.sql_server_resource_group_name
-  location            = var.sql_server_location
+  resource_group_name = azurerm_resource_group.sql_server_rg.name
+  location            = azurerm_resource_group.sql_server_rg.location
   server_name         = azurerm_sql_server.sql_server.name
   edition             = "Free"
 }
