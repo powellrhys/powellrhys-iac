@@ -7,7 +7,8 @@ module "storage_account" {
     storage_containers = [
         "play-cricket",
         "strava",
-        "fantasy-premier-league"
+        "fantasy-premier-league",
+        "golf"
     ]
 }
 
