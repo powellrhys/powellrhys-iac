@@ -12,12 +12,6 @@ inputs:
     description: "List of toml dependencies"
     required: false
     default: "."
-  
-  secrets:
-    codecov_token:
-      description: 
-      required: false
-      default: ""
 
 runs:
   using: "composite"
@@ -44,7 +38,7 @@ runs:
       run: pytest --cov --cov-branch --cov-report=xml
       shell: bash
 
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+    # - name: Upload coverage reports to Codecov
+    #   uses: codecov/codecov-action@v5
+    #   with:
+    #     token: ${{ secrets.CODECOV_TOKEN }}
