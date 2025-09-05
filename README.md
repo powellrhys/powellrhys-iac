@@ -40,7 +40,7 @@ All GitHub Actions workflows live under .github/workflows. They are designed to 
 - `template-lint-yaml` - used to lint yaml code
 - `template-run-bdd-tests` - used to run bdd tests using behave
 - `template-run-pytests` - used to run python pytests
-- `template-restart-appservice` - restart an azure app service
+- `template-restart-appservice` - used to restart an azure app service
 
 ## Terraform Modules
 
