@@ -12,14 +12,9 @@ on:
       - '**'
 
 jobs:
-  lint:
-    name: Lint Yaml
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout repository
-      - uses: actions/checkout@v3
-
-      # Execute linting action
-      - uses: ./.github/workflows/template-lint-yaml.yml
-        with:
-          config_path: .yamllint.yml
+  # Lint yaml codebase
+  lint-yaml:
+    name: Lint Yaml Pipelines
+    uses: ./.github/workflows/template-lint-yaml.yml
+    with:
+      config_path: '.yamllint.yml'
