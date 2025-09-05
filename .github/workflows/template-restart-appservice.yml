@@ -1,0 +1,53 @@
+name: Restart Azure Web App
+
+on:
+  workflow_call:
+    inputs:
+      webapp_name:
+        description: "Azure Web App name"
+        required: true
+        type: string
+      resource_group:
+        description: "Azure Resource Group"
+        required: true
+        type: string
+
+    secrets:
+      azure_credentials:
+        description: "Azure credentials JSON"
+        required: true
+        type: string
+
+jobs:
+  restart-webapp:
+    name: Restart Web App
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.azure_credentials }}
+
+      # Stop azure app service
+      - name: Stop Azure Web App
+        run: |
+          az webapp stop \
+            --name ${{ inputs.webapp_name }} \
+            --resource-group ${{ inputs.resource_group }}
+
+      # Wait 10 seconds to ensure app service has stopped
+      - name: Wait for webapp to stop
+        run: sleep 10
+
+      # Start app service again
+      - name: Start Azure Web App
+        run: |
+          az webapp start \
+            --name ${{ inputs.webapp_name }} \
+            --resource-group ${{ inputs.resource_group }}
