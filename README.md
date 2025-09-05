@@ -36,11 +36,11 @@ All GitHub Actions workflows live under .github/workflows. They are designed to 
 - `lint-codebase.yml` - used to lint the yaml codebase within this repository 
 - `template-build-and-push-container.yml` - used to build and push containers to dockerhub (not an action as secrets are required within the template)
 - `template-plan-apply-terraform.yml` - used to plan and apply terraform config to the cloud
-
-All GitHub Actions actions live under .github/actions. They are designed to be reusable and composable:
-
-- `lint-pyton/action.yml` - used to lint python code
-- `lint-yaml/actions.yml` - used to lint yaml code
+- `template-lint-python` - used to lint python code
+- `template-lint-yaml` - used to lint yaml code
+- `template-run-bdd-tests` - used to run bdd tests using behave
+- `template-run-pytests` - used to run python pytests
+- `template-restart-appservice` - restart an azure app service
 
 ## Terraform Modules
 
