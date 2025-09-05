@@ -16,7 +16,6 @@ on:
       azure_credentials:
         description: "Azure credentials JSON"
         required: true
-        type: string
 
 jobs:
   restart-webapp:
