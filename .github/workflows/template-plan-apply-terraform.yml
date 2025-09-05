@@ -36,7 +36,7 @@ jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
-    environment: ${{ inputs.release_environment }}
+    environment: ${{ github.ref != 'refs/heads/main' && inputs.release_environment || '' }}
     permissions:
       contents: read
       packages: read
