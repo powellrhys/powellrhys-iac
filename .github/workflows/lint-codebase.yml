@@ -20,6 +20,6 @@ jobs:
       - uses: actions/checkout@v3
 
       # Execute linting action
-      - uses: ./.github/actions/lint-yaml
+      - uses: ./.github/workflows/template-lint-yaml.yml
         with:
           config_path: .yamllint.yml
