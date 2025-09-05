@@ -1,29 +1,30 @@
-name: "Run PyTest Tests"
-
+name: Run Behave BDD Tests
 on:
   workflow_call:
     inputs:
+      features_path:
+        description: "Path to the Behave features directory"
+        required: false
+        default: "features"
+        type: string
+
       toml_dependencies:
         description: "List of toml dependencies"
         required: false
         type: string
         default: "."
 
-    secrets:
-      codecov_token:
-        description: "Codecov upload token"
-        required: true
-
 jobs:
-  pytest:
-    name: PyTest
+  behave-tests:
+    name: Behave BDD Tests
     runs-on: ubuntu-latest
+
     steps:
-      # Checkout codebase
+        # Checkout codebase
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup python
+      # Configure python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -35,12 +36,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ${{ inputs.toml_dependencies }}
 
-      # Execute pytest tests and generate code coverage report
-      - name: Run PyTests
-        run: pytest --cov --cov-branch --cov-report=xml
-
-      # Upload coverage reports to Codecov
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      # Run behave testing
+      - name: Run Behave tests
+        run: behave ${{ inputs.features_path }} --format=plain --outfile=behave.log
