@@ -35,7 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ${{ inputs.toml_dependencies }}
 
-      # Execute pytest tests and generate code coverage report 
+      # Execute pytest tests and generate code coverage report
       - name: Run PyTests
         run: pytest --cov --cov-branch --cov-report=xml
 
