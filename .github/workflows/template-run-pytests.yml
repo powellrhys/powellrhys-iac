@@ -3,12 +3,6 @@ name: "Run PyTest Tests"
 on:
   workflow_call:
     inputs:
-      testing_directory:
-        description: "Path to the pytest directory"
-        required: false
-        type: string
-        default: "."
-
       toml_dependencies:
         description: "List of toml dependencies"
         required: false
@@ -22,6 +16,7 @@ on:
 
 jobs:
   pytest:
+    name: PyTest
     runs-on: ubuntu-latest
     steps:
       # Checkout codebase
@@ -40,7 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ${{ inputs.toml_dependencies }}
 
-      # Execute pytest
+      # Execute pytest tests
       - name: Run PyTests
         run: pytest --cov --cov-branch --cov-report=xml
 
