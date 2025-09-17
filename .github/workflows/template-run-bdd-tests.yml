@@ -1,4 +1,4 @@
-name: Run Behave BDD Tests
+name: Template - Run Behave BDD Tests
 on:
   workflow_call:
     inputs:

@@ -32,14 +32,11 @@ resource "azurerm_mssql_server" "sql_server" {
 }
 
 resource "azurerm_mssql_database" "sql_database" {
-  for_each            = toset(var.sql_server_database_names)
-  name                = each.value
-  server_id           = azurerm_mssql_server.sql_server.id
+  for_each   = toset(var.sql_server_database_names)
+  name       = each.value
+  server_id  = azurerm_mssql_server.sql_server.id
 
-  # This is the key change
-  sku_name = "GP_S_Gen5_1"
-
-  auto_pause_delay_in_minutes = 60
-  min_capacity                = 0.5
-  max_size_gb                 = 32
+  # ✅ DTU-based Basic SKU, eligible for free tier
+  sku_name    = "Basic"
+  max_size_gb = 2
 }

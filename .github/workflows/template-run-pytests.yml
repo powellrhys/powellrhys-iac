@@ -1,4 +1,4 @@
-name: "Run PyTest Tests"
+name: Template - Run PyTest Tests
 
 on:
   workflow_call:

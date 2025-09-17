@@ -1,4 +1,4 @@
-name: Lint Python Codebase
+name: Template - Lint Python Codebase
 
 on:
   workflow_call:

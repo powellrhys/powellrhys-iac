@@ -1,4 +1,4 @@
-name: Restart Azure Web App
+name: Template - Restart Azure Web App
 
 on:
   workflow_call:
