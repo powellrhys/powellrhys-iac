@@ -36,7 +36,6 @@ resource "azurerm_mssql_database" "sql_database" {
   name       = each.value
   server_id  = azurerm_mssql_server.sql_server.id
 
-  # ✅ DTU-based Basic SKU, eligible for free tier
   sku_name    = "Basic"
   max_size_gb = 2
 }
