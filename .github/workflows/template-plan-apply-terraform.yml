@@ -1,4 +1,4 @@
-name: Terraform Plan & Apply
+name: Template - Terraform Plan & Apply
 
 # Define workflow call and input parameters and secrets
 on:

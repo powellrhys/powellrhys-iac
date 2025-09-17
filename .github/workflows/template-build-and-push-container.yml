@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Template - Build and Push Docker Image
 
 # Define trigger condition and input variables and secrets
 on:
