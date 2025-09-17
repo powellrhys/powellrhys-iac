@@ -37,5 +37,11 @@ resource "azurerm_mssql_database" "sql_database" {
   resource_group_name = azurerm_resource_group.sql_server_rg.name
   location            = azurerm_resource_group.sql_server_rg.location
   server_id           = azurerm_mssql_server.sql_server.id
-  sku_name            = "Basic"
+
+  # This is the key change
+  sku_name = "GP_S_Gen5_1"
+
+  auto_pause_delay_in_minutes = 60
+  min_capacity                = 0.5
+  max_size_gb                 = 32
 }

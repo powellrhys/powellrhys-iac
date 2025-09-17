@@ -20,3 +20,18 @@ module "app_service_plan" {
     app_service_plan_location = var.location
     os_type = "Linux"
 }
+
+module "sql" {
+  source = "../terraform/azure/sql_server"
+
+  sql_server_resource_group_name = "powellrhys-sql-rg"
+  sql_server_location            = "westeurope"
+  sql_server_name                = "powellrhys-sql-server"
+
+  sql_server_database_names = [
+    "fantasy-premier-league",
+  ]
+
+  admin_password_rotation_months = 6
+}
+

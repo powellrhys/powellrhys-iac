@@ -21,4 +21,5 @@ variable "sql_server_database_names" {
 variable "admin_password_rotation_months" {
   description = "Rotation Period of SQL Server Password (months)"
   type        = string
+  default     = 6
 }
