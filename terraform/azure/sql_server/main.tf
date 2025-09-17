@@ -34,8 +34,6 @@ resource "azurerm_mssql_server" "sql_server" {
 resource "azurerm_mssql_database" "sql_database" {
   for_each            = toset(var.sql_server_database_names)
   name                = each.value
-  resource_group_name = azurerm_resource_group.sql_server_rg.name
-  location            = azurerm_resource_group.sql_server_rg.location
   server_id           = azurerm_mssql_server.sql_server.id
 
   # This is the key change
