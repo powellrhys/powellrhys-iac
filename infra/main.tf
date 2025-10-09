@@ -22,8 +22,8 @@ module "app_service_plan" {
     os_type = "Linux"
 }
 
-module "my_sql_server_no_db" {
-  source = "./modules/sql_server"
+module "sql_server" {
+  source = "../terraform/azure/sql_server"
 
   sql_server_resource_group_name = "powellrhys-sql-server-rg"
   sql_server_location            = "westeurope"
