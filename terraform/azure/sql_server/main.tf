@@ -32,7 +32,7 @@ resource "azurerm_mssql_server" "sql_server" {
 }
 
 resource "azurerm_mssql_database" "sql_database" {
-  for_each = length(var.sql_server_database_names) > 0 ? toset(var.sql_server_database_names) : {}
+  for_each = length(var.sql_server_database_names) > 0 ? toset(var.sql_server_database_names) : toset([])
 
   name      = each.value
   server_id = azurerm_mssql_server.sql_server.id
