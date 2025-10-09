@@ -32,9 +32,10 @@ resource "azurerm_mssql_server" "sql_server" {
 }
 
 resource "azurerm_mssql_database" "sql_database" {
-  for_each   = toset(var.sql_server_database_names)
-  name       = each.value
-  server_id  = azurerm_mssql_server.sql_server.id
+  for_each = length(var.sql_server_database_names) > 0 ? toset(var.sql_server_database_names) : toset([])
+
+  name      = each.value
+  server_id = azurerm_mssql_server.sql_server.id
 
   sku_name    = "Basic"
   max_size_gb = 2
