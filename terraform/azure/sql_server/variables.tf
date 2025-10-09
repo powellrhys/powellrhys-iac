@@ -16,6 +16,7 @@ variable "sql_server_location" {
 variable "sql_server_database_names" {
   type        = list(string)
   description = "List of SQL database names to create in the SQL server."
+  default     = []
 }
 
 variable "admin_password_rotation_months" {
