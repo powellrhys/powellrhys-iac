@@ -3,13 +3,15 @@ name: Deploy Terraform
 # Define pipeline trigger criteria
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'feature/**'
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
     branches:
-      - 'feature/**'
+      - main
+
+concurrency:
+  group: deploy-terraform
+  cancel-in-progress: false
 
 jobs:
   # Execute plan

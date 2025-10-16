@@ -2,14 +2,16 @@ name: Lint Yaml Codebase
 
 # Define trigger criteria
 on:
-  push:
-    branches:
-      - 'feature/**'
-
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
     branches:
-      - '**'
+      - main
+
+concurrency:
+  group: lint-codebase
+  cancel-in-progress: false
 
 jobs:
   # Lint yaml codebase
