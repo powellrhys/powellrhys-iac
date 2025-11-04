@@ -65,6 +65,7 @@ jobs:
             -password=${{ secrets.SQL_SERVER_PASSWORD }}
             -locations=filesystem:${{ inputs.database_path }}
             -connectRetries=10
+            -q
             migrate
 
       - name: Remove Azure SQL Firewall Rule
