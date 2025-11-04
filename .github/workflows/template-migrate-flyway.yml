@@ -35,18 +35,22 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Azure Login
-        uses: azure/login@v2
+        uses: azure/login@v2.3.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Get GitHub Runner Public IP
         id: ip
         run: |
-          IP=$(curl -s https://api.ipify.org)
+          IP=$(curl -s --max-time 10 https://api.ipify.org) || exit 1
           echo "ip=$IP" >> $GITHUB_OUTPUT
+          if [[ -z "$IP" ]]; then
+            echo "Failed to retrieve public IP" >&2
+            exit 1
+          fi
 
       - name: Add Azure SQL Firewall Rule
         run: |
@@ -58,7 +62,7 @@ jobs:
             --end-ip-address ${{ steps.ip.outputs.ip }}
 
       - name: Run Flyway migrations
-        uses: docker://flyway/flyway:latest
+        uses: docker://flyway/flyway:10.8.1
         with:
           args: >
             -url=${{ secrets.SQL_SERVER_JDBC_URL }}
