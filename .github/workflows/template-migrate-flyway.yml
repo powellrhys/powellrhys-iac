@@ -28,6 +28,7 @@ on:
 
 jobs:
   migrate:
+    name: Run Flyway Migration
     runs-on: ubuntu-latest
     env:
       FIREWALL_RULE_NAME: github-actions-${{ github.run_id }}
