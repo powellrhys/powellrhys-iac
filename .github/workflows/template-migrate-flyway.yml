@@ -1,0 +1,76 @@
+name: Flyway Migration Template
+
+on:
+  workflow_call:
+    inputs:
+      resource_group:
+        description: "Azure Resource Group containing the SQL Server"
+        required: true
+        type: string
+      sql_server:
+        description: "Azure SQL Server name"
+        required: true
+        type: string
+      database_path:
+        description: "Path to the Flyway migrations folder"
+        required: false
+        default: "./database/flyway"
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+      SQL_SERVER_JDBC_URL:
+        required: true
+      SQL_SERVER_USERNAME:
+        required: true
+      SQL_SERVER_PASSWORD:
+        required: true
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      FIREWALL_RULE_NAME: github-actions-${{ github.run_id }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get GitHub Runner Public IP
+        id: ip
+        run: |
+          IP=$(curl -s https://api.ipify.org)
+          echo "ip=$IP" >> $GITHUB_OUTPUT
+
+      - name: Add Azure SQL Firewall Rule
+        run: |
+          az sql server firewall-rule create \
+            --resource-group ${{ inputs.resource_group }} \
+            --server ${{ inputs.sql_server }} \
+            --name $FIREWALL_RULE_NAME \
+            --start-ip-address ${{ steps.ip.outputs.ip }} \
+            --end-ip-address ${{ steps.ip.outputs.ip }}
+
+      - name: Run Flyway migrations
+        uses: docker://flyway/flyway:latest
+        with:
+          args: >
+            -url=${{ secrets.SQL_SERVER_JDBC_URL }}
+            -user=${{ secrets.SQL_SERVER_USERNAME }}
+            -password=${{ secrets.SQL_SERVER_PASSWORD }}
+            -locations=filesystem:${{ inputs.database_path }}
+            -connectRetries=10
+            migrate
+
+      - name: Remove Azure SQL Firewall Rule
+        if: always()
+        run: |
+          az sql server firewall-rule delete \
+            --resource-group ${{ inputs.resource_group }} \
+            --server ${{ inputs.sql_server }} \
+            --name $FIREWALL_RULE_NAME
