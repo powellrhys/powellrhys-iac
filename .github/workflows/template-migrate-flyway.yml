@@ -34,14 +34,17 @@ jobs:
       FIREWALL_RULE_NAME: github-actions-${{ github.run_id }}
 
     steps:
+        # Checkout out repository
       - name: Checkout repository
         uses: actions/checkout@v5
-
+        
+        # Login to azure
       - name: Azure Login
         uses: azure/login@v2.3.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+        # Fetch github runner public IP
       - name: Get GitHub Runner Public IP
         id: ip
         run: |
@@ -51,7 +54,8 @@ jobs:
             echo "Failed to retrieve public IP" >&2
             exit 1
           fi
-
+        
+        # Add github runner IP to database firewall
       - name: Add Azure SQL Firewall Rule
         run: |
           az sql server firewall-rule create \
@@ -60,7 +64,8 @@ jobs:
             --name $FIREWALL_RULE_NAME \
             --start-ip-address ${{ steps.ip.outputs.ip }} \
             --end-ip-address ${{ steps.ip.outputs.ip }}
-
+            
+        # Run flyway migrations on database
       - name: Run Flyway migrations
         uses: docker://flyway/flyway:10.8.1
         with:
@@ -72,7 +77,8 @@ jobs:
             -connectRetries=10
             -q
             migrate
-
+        
+        # Remove github runner IP from database firewall
       - name: Remove Azure SQL Firewall Rule
         if: always()
         run: |
