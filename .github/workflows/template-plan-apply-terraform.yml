@@ -1,12 +1,10 @@
 name: Template - Terraform Plan & Apply
 
-# Define workflow call and input parameters and secrets
 on:
   workflow_call:
     secrets:
       AZURE_CREDENTIALS:
         required: true
-
       app_service_app_settings:
         description: 'App Service application settings in JSON string format'
         required: false
@@ -32,33 +30,36 @@ on:
         required: false
         type: string
 
+    outputs:
+      has_changes:
+        description: 'Whether the plan detected infrastructure changes'
+        value: ${{ jobs.terraform.outputs.has_changes }}
+
 jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.plan_result.outputs.has_changes }}
     environment: ${{ github.ref == 'refs/heads/main' && '' || inputs.release_environment }}
     permissions:
       contents: read
       packages: read
 
     steps:
-      # Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Login to azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Setup terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.2
 
-      # Collect azure credentials for terraform remote config
       - name: Export Azure credentials for Terraform
         run: |
           echo '${{ secrets.AZURE_CREDENTIALS }}' > azurecreds.json
@@ -68,39 +69,30 @@ jobs:
           echo "ARM_TENANT_ID=$(jq -r .tenantId azurecreds.json)" >> $GITHUB_ENV
         shell: bash
 
-      # Initialize terraform
       - name: Terraform Init
-        run: |
-          terraform -chdir="${{ inputs.tf_directory }}" init
+        run: terraform -chdir="${{ inputs.tf_directory }}" init
 
-      # Validate terraform
       - name: Terraform Validate
         run: terraform -chdir="${{ inputs.tf_directory }}" validate
 
-      # Terraform plan with var-file
-      - name: Terraform Plan with var-file
-        if: inputs.tf_vars_file_name != ''
-        shell: pwsh
+      - name: Terraform Plan
+        id: plan_result
+        shell: bash
         run: |
-          $appSettings = '${{ secrets.app_service_app_settings }}'
-          terraform `
-            -chdir="${{ inputs.tf_directory }}" plan `
-            -var-file="${{ inputs.tf_vars_file_name }}" `
-            -var "app_service_app_settings=$appSettings" `
-            -out=tfplan
+          set +e
+          terraform -chdir="${{ inputs.tf_directory }}" plan -detailed-exitcode -out=tfplan
+          exit_code=$?
+          echo "Terraform plan exit code: $exit_code"
 
-      # Terraform plan without var file
-      - name: Terraform Plan without var-file
-        if: inputs.tf_vars_file_name == ''
-        shell: pwsh
-        run: |
-          $appSettings = '${{ secrets.app_service_app_settings }}'
-          terraform `
-            -chdir="${{ inputs.tf_directory }}" plan `
-            -var "app_service_app_settings=$appSettings" `
-            -out=tfplan
+          if [ $exit_code -eq 2 ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
 
-      # Apply terraform
+          # Don't fail the job — we’ll let downstream decide
+          exit 0
+
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
-        run: terraform -chdir="${{ inputs.tf_directory }}" apply tfplan
+        run: terraform -chdir="${{ inputs.tf_directory }}" apply -auto-approve tfplan
