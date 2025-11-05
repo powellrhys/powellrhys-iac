@@ -13,38 +13,38 @@ on:
         description: 'GitHub environment for release'
         default: ''
         type: string
-
       should_apply:
         description: 'Whether to apply the plan'
         default: 'false'
         type: string
-
       tf_directory:
         description: 'Terraform code directory'
         required: false
         default: '.'
         type: string
-
       tf_vars_file_name:
         description: 'Name of tfvars file'
         required: false
         type: string
-
     outputs:
       has_changes:
-        description: 'Whether the plan detected infrastructure changes'
+        description: 'Whether Terraform detected infrastructure changes'
         value: ${{ jobs.terraform.outputs.has_changes }}
 
 jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.plan_result.outputs.has_changes }}
     environment: ${{ github.ref == 'refs/heads/main' && '' || inputs.release_environment }}
     permissions:
       contents: read
       packages: read
+
+    # job-level output that reads from whichever step actually ran
+    outputs:
+      has_changes: >-
+        ${{ steps.plan_with_vars.outputs.has_changes ||
+            steps.plan_without_vars.outputs.has_changes }}
 
     steps:
       - name: Checkout repo
@@ -75,23 +75,40 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir="${{ inputs.tf_directory }}" validate
 
-      - name: Terraform Plan
-        id: plan_result
-        shell: bash
+      # Terraform plan with var-file
+      - name: Terraform Plan with var-file
+        if: inputs.tf_vars_file_name != ''
+        id: plan_with_vars
+        shell: pwsh
         run: |
-          set +e
-          terraform -chdir="${{ inputs.tf_directory }}" plan -detailed-exitcode -out=tfplan
-          exit_code=$?
-          echo "Terraform plan exit code: $exit_code"
+          $appSettings = '${{ secrets.app_service_app_settings }}'
+          terraform `
+            -chdir="${{ inputs.tf_directory }}" plan `
+            -var-file="${{ inputs.tf_vars_file_name }}" `
+            -var "app_service_app_settings=$appSettings" `
+            -detailed-exitcode `
+            -out=tfplan
+          $exit = $LASTEXITCODE
+          if ($exit -eq 2) { echo "has_changes=true"  >> $env:GITHUB_OUTPUT }
+          elseif ($exit -eq 0) { echo "has_changes=false" >> $env:GITHUB_OUTPUT }
+          else { exit $exit }
 
-          if [ $exit_code -eq 2 ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-
-          # Don't fail the job — we’ll let downstream decide
-          exit 0
+      # Terraform plan without var file
+      - name: Terraform Plan without var-file
+        if: inputs.tf_vars_file_name == ''
+        id: plan_without_vars
+        shell: pwsh
+        run: |
+          $appSettings = '${{ secrets.app_service_app_settings }}'
+          terraform `
+            -chdir="${{ inputs.tf_directory }}" plan `
+            -var "app_service_app_settings=$appSettings" `
+            -detailed-exitcode `
+            -out=tfplan
+          $exit = $LASTEXITCODE
+          if ($exit -eq 2) { echo "has_changes=true"  >> $env:GITHUB_OUTPUT }
+          elseif ($exit -eq 0) { echo "has_changes=false" >> $env:GITHUB_OUTPUT }
+          else { exit $exit }
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}

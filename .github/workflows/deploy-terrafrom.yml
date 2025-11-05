@@ -25,7 +25,7 @@ jobs:
   # Terraform apply
   apply:
     needs: plan
-    if: needs.plan.outputs.has_changes == 'true'   # ✅ only run if plan found changes
+    if: needs.plan.outputs.has_changes == 'true'
     name: Apply
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
