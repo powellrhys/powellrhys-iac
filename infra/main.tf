@@ -8,7 +8,8 @@ module "storage_account" {
         "play-cricket",
         "strava",
         "golf",
-        "project-monitoring"
+        "project-monitoring",
+        "test"
     ]
 }
 
