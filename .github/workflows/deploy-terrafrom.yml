@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Terraform plan
   plan:
     name: Plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
@@ -20,12 +21,11 @@ jobs:
       tf_directory: 'infra'
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-    outputs:
-      has_changes: ${{ outputs.has_changes }} # 👈 expose the reusable workflow output
 
+  # Terraform apply
   apply:
     needs: plan
-    if: needs.plan.outputs.has_changes == 'true'  # 👈 only run if there are changes
+    if: needs.plan.outputs.has_changes == 'true'   # ✅ only run if plan found changes
     name: Apply
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
