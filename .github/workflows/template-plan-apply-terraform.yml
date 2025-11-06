@@ -59,6 +59,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.2
+          terraform_wrapper: false
 
       - name: Export Azure credentials for Terraform
         run: |
@@ -118,23 +119,20 @@ jobs:
           $tfDir = "${{ inputs.tf_directory }}"
 
           # Run Terraform plan with detailed exit code
-          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan 2>$null
+          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan
           $exitCode = $LASTEXITCODE
 
           Write-Host "Terraform plan exit code: $exitCode"
 
           if ($exitCode -eq 0) {
               echo "HAS_CHANGES=false" >> $env:GITHUB_ENV
-              Write-Host "No changes detected"
           } elseif ($exitCode -eq 2) {
               echo "HAS_CHANGES=true" >> $env:GITHUB_ENV
-              Write-Host "Changes detected"
           } else {
               throw "Terraform plan failed with exit code $exitCode"
           }
 
 
-                
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
