@@ -118,8 +118,8 @@ jobs:
           $appSettings = '${{ secrets.app_service_app_settings }}'
           $tfDir = "${{ inputs.tf_directory }}"
 
-          # Run Terraform plan with detailed exit code
-          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan
+          # Run Terraform plan; suppress warnings from stderr
+          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan 2>$null
           $exitCode = $LASTEXITCODE
 
           Write-Host "Terraform plan exit code: $exitCode"
