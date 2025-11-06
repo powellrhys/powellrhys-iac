@@ -116,17 +116,17 @@ jobs:
         run: |
           $appSettings = '${{ secrets.app_service_app_settings }}'
 
-          # Run Terraform plan and save the plan file
+          # Run Terraform plan and save binary plan file
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
             -var "app_service_app_settings=$appSettings" `
             -out=tfplan | Out-Host
 
-          # Convert the plan to JSON for analysis
-          terraform -chdir="${{ inputs.tf_directory }}" show -json tfplan > plan.json
+          # Export plan to JSON — place '-json' BEFORE redirection
+          terraform -chdir="${{ inputs.tf_directory }}" show -json tfplan | Out-File -Encoding utf8 plan.json
 
-          # Parse the JSON and check for any create/update/delete actions
-          $plan = Get-Content plan.json | ConvertFrom-Json
+          # Parse JSON and detect changes
+          $plan = Get-Content plan.json -Raw | ConvertFrom-Json
           $changes = $plan.resource_changes | Where-Object {
             $_.change.actions -contains "create" -or
             $_.change.actions -contains "update" -or
@@ -135,12 +135,13 @@ jobs:
 
           if ($changes.Count -gt 0) {
             Write-Host "Terraform detected $($changes.Count) infrastructure change(s)"
-            "has_changes=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            "has_changes=true"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           }
           else {
             Write-Host "No infrastructure changes detected"
             "has_changes=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           }
+
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
