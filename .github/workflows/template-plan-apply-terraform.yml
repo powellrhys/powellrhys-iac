@@ -116,16 +116,15 @@ jobs:
         run: |
           $appSettings = '${{ secrets.app_service_app_settings }}'
 
-          # Run Terraform plan and save binary plan file
-          terraform `
-            -chdir="${{ inputs.tf_directory }}" plan `
-            -var "app_service_app_settings=$appSettings" `
-            -out=tfplan
+          # Run Terraform plan
+          terraform -chdir="infra" plan -var "app_service_app_settings=$appSettings" -out=tfplan
 
-          # Load plan JSON into a PowerShell object
-          $plan = terraform -chdir="${{ inputs.tf_directory }}" show -json tfplan | ConvertFrom-Json
+          # Save plan JSON to a file and read it safely
+          terraform -chdir="infra" show -json tfplan > tfplan.json
+          $json = Get-Content tfplan.json -Raw
+          $plan = $json | ConvertFrom-Json
 
-          # Filter only resources that have create/update/delete actions
+          # Filter only resources with create/update/delete
           $changes = $plan.resource_changes | Where-Object { 
               ($_.change.actions -contains "create") -or 
               ($_.change.actions -contains "update") -or 
@@ -133,17 +132,13 @@ jobs:
           }
 
           Write-Host "Number of changes detected: $($changes.Count)"
-          Write-Host $changes
 
-          # Optional: set GitHub Actions environment variable
+          # Set GitHub Actions environment variable
           if ($changes.Count -gt 0) {
               echo "HAS_CHANGES=true" >> $env:GITHUB_ENV
           } else {
               echo "HAS_CHANGES=false" >> $env:GITHUB_ENV
           }
-
-
-
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
