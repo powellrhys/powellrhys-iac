@@ -126,7 +126,8 @@ jobs:
 
           # Extract all resources that have actions other than "no-op"
           $changes = $plan.resource_changes | Where-Object { $_.change.actions -ne @("no-op") }
-
+          
+          Write-Host "rhys"
           Write-Host $changes
 
 
