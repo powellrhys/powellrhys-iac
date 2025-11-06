@@ -129,8 +129,9 @@ jobs:
             
           Write-Host "rhys"
           Write-Host "Number of changes detected: $($changes.Count)"
+          Write-Host $plan
           Write-Host $changes
-
+          Write-Host "rhys2"
 
 
       - name: Terraform Apply (if enabled)
