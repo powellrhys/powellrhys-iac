@@ -117,35 +117,20 @@ jobs:
           $appSettings = '${{ secrets.app_service_app_settings }}'
           $tfDir = "${{ inputs.tf_directory }}"
 
-          # Run Terraform plan
-          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -out=tfplan
+          # Run Terraform plan with detailed exit code
+          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan
+          $exitCode = $LASTEXITCODE
 
-          # Export plan JSON to a file (warnings go to console, not the file)
-          terraform -chdir="$tfDir" show -json tfplan > tfplan.json
+          Write-Host "Terraform plan exit code: $exitCode"
 
-          # Read the JSON file safely
-          $json = Get-Content tfplan.json -Raw
-          $plan = $json | ConvertFrom-Json
-          # $appSettings = '${{ secrets.app_service_app_settings }}'
-
-          # # Run Terraform plan and save binary plan file
-          # terraform `
-          #   -chdir="${{ inputs.tf_directory }}" plan `
-          #   -var "app_service_app_settings=$appSettings" `
-          #   -out=tfplan
-
-          # $plan = terraform -chdir="infra" show -json tfplan | ConvertFrom-Json
-
-          # # $plan = terraform -chdir="infra" show -json tfplan
-
-          # # # Extract all resources that have actions other than "no-op"
-          # # $changes = $plan.resource_changes | Where-Object { $_.change.actions -ne @("no-op") }
-            
-          # Write-Host "rhys"
-          # Write-Host "Number of changes detected: $($changes.Count)"
-          # Write-Host $plan
-          # Write-Host $changes
-          # Write-Host "rhys2"
+          if ($exitCode -eq 0) {
+              echo "HAS_CHANGES=false" >> $env:GITHUB_ENV
+          } elseif ($exitCode -eq 2) {
+              echo "HAS_CHANGES=true" >> $env:GITHUB_ENV
+          } else {
+              throw "Terraform plan failed with exit code $exitCode"
+          }
+                  
 
 
       - name: Terraform Apply (if enabled)
