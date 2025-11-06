@@ -122,7 +122,7 @@ jobs:
             -var "app_service_app_settings=$appSettings" `
             -out=tfplan
 
-          terraform show -json tfplan
+          terraform show -json infra/tfplan
 
 
       - name: Terraform Apply (if enabled)
