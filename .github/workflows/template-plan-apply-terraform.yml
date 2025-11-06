@@ -86,11 +86,7 @@ jobs:
             -var-file="${{ inputs.tf_vars_file_name }}" `
             -var "app_service_app_settings=$appSettings" `
             -detailed-exitcode `
-            -out=tfplan | Out-Host
-          $exit = $LASTEXITCODE
-          if ($exit -eq 2) { echo "has_changes=true" >> $env:GITHUB_OUTPUT; exit 0 }
-          elseif ($exit -eq 0) { echo "has_changes=false" >> $env:GITHUB_OUTPUT; exit 0 }
-          else { exit $exit }
+            -out=tfplan
 
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
@@ -102,11 +98,7 @@ jobs:
             -chdir="${{ inputs.tf_directory }}" plan `
             -var "app_service_app_settings=$appSettings" `
             -detailed-exitcode `
-            -out=tfplan | Out-Host
-          $exit = $LASTEXITCODE
-          if ($exit -eq 2) { echo "has_changes=true" >> $env:GITHUB_OUTPUT; exit 0 }
-          elseif ($exit -eq 0) { echo "has_changes=false" >> $env:GITHUB_OUTPUT; exit 0 }
-          else { exit $exit }
+            -out=tfplan
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
