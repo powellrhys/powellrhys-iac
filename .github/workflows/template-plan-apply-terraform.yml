@@ -124,6 +124,11 @@ jobs:
 
           terraform -chdir="infra" show -json tfplan
 
+          # Extract all resources that have actions other than "no-op"
+          $changes = $plan.resource_changes | Where-Object { $_.change.actions -ne @("no-op") }
+
+          Write-Host $changes
+
 
 
       - name: Terraform Apply (if enabled)
