@@ -81,16 +81,33 @@ jobs:
         shell: pwsh
         run: |
           $appSettings = '${{ secrets.app_service_app_settings }}'
+
+          # Run the plan – no detailed exit code needed
           terraform `
             -chdir="${{ inputs.tf_directory }}" plan `
             -var-file="${{ inputs.tf_vars_file_name }}" `
             -var "app_service_app_settings=$appSettings" `
-            -detailed-exitcode `
-            -out=tfplan `
-            -ErrorAction SilentlyContinue | Out-Host
-          $exit = $LASTEXITCODE
-          if ($exit -eq 2) { exit 0 }
-          exit $exit
+            -out=tfplan | Out-Host
+
+          # Export the plan to JSON
+          terraform -chdir="${{ inputs.tf_directory }}" show -json tfplan > plan.json
+
+          # Count how many resources will change (create/update/delete)
+          $plan = Get-Content plan.json | ConvertFrom-Json
+          $changes = $plan.resource_changes | Where-Object {
+            $_.change.actions -contains "create" -or
+            $_.change.actions -contains "update" -or
+            $_.change.actions -contains "delete"
+          }
+
+          if ($changes.Count -gt 0) {
+            Write-Host "Terraform detected $($changes.Count) infrastructure change(s)"
+            "has_changes=true"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+          else {
+            Write-Host "No infrastructure changes detected"
+            "has_changes=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
 
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
@@ -102,12 +119,7 @@ jobs:
             -chdir="${{ inputs.tf_directory }}" plan `
             -var "app_service_app_settings=$appSettings" `
             -detailed-exitcode `
-            -out=tfplan `
-            -ErrorAction SilentlyContinue | Out-Host
-          $exit = $LASTEXITCODE
-          if ($exit -eq 2) { exit 0 }
-          exit $exit
-
+            -out=tfplan
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
