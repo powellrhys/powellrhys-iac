@@ -115,25 +115,37 @@ jobs:
         shell: pwsh
         run: |
           $appSettings = '${{ secrets.app_service_app_settings }}'
+          $tfDir = "${{ inputs.tf_directory }}"
 
-          # Run Terraform plan and save binary plan file
-          terraform `
-            -chdir="${{ inputs.tf_directory }}" plan `
-            -var "app_service_app_settings=$appSettings" `
-            -out=tfplan
+          # Run Terraform plan
+          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -out=tfplan
 
-          $plan = terraform -chdir="infra" show -json tfplan | ConvertFrom-Json
+          # Export plan JSON to a file (warnings go to console, not the file)
+          terraform -chdir="$tfDir" show -json tfplan > tfplan.json
 
-          # $plan = terraform -chdir="infra" show -json tfplan
+          # Read the JSON file safely
+          $json = Get-Content tfplan.json -Raw
+          $plan = $json | ConvertFrom-Json
+          # $appSettings = '${{ secrets.app_service_app_settings }}'
 
-          # # Extract all resources that have actions other than "no-op"
-          # $changes = $plan.resource_changes | Where-Object { $_.change.actions -ne @("no-op") }
+          # # Run Terraform plan and save binary plan file
+          # terraform `
+          #   -chdir="${{ inputs.tf_directory }}" plan `
+          #   -var "app_service_app_settings=$appSettings" `
+          #   -out=tfplan
+
+          # $plan = terraform -chdir="infra" show -json tfplan | ConvertFrom-Json
+
+          # # $plan = terraform -chdir="infra" show -json tfplan
+
+          # # # Extract all resources that have actions other than "no-op"
+          # # $changes = $plan.resource_changes | Where-Object { $_.change.actions -ne @("no-op") }
             
-          Write-Host "rhys"
-          Write-Host "Number of changes detected: $($changes.Count)"
-          Write-Host $plan
-          Write-Host $changes
-          Write-Host "rhys2"
+          # Write-Host "rhys"
+          # Write-Host "Number of changes detected: $($changes.Count)"
+          # Write-Host $plan
+          # Write-Host $changes
+          # Write-Host "rhys2"
 
 
       - name: Terraform Apply (if enabled)
