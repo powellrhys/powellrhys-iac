@@ -90,26 +90,6 @@ jobs:
             -var "app_service_app_settings=$appSettings" `
             -out=tfplan | Out-Host
 
-          # Export the plan to JSON
-          terraform -chdir="${{ inputs.tf_directory }}" show -json tfplan > plan.json
-
-          # Count how many resources will change (create/update/delete)
-          $plan = Get-Content plan.json | ConvertFrom-Json
-          $changes = $plan.resource_changes | Where-Object {
-            $_.change.actions -contains "create" -or
-            $_.change.actions -contains "update" -or
-            $_.change.actions -contains "delete"
-          }
-
-          if ($changes.Count -gt 0) {
-            Write-Host "Terraform detected $($changes.Count) infrastructure change(s)"
-            "has_changes=true"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          }
-          else {
-            Write-Host "No infrastructure changes detected"
-            "has_changes=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          }
-
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
         id: plan_without_vars
