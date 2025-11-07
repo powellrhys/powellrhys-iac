@@ -1,6 +1,5 @@
 name: Deploy Terraform
 
-# Define pipeline trigger criteria
 on:
   workflow_dispatch:
   pull_request:
@@ -14,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Execute plan
+  # Terraform plan
   plan:
     name: Plan
     uses: ./.github/workflows/template-plan-apply-terraform.yml
@@ -23,9 +22,10 @@ jobs:
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-  # Execute apply
+  # Terraform apply
   apply:
     needs: plan
+    if: needs.plan.outputs.has_changes == 'true'
     name: Apply
     uses: ./.github/workflows/template-plan-apply-terraform.yml
     with:
