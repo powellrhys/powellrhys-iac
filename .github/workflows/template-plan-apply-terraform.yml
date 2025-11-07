@@ -116,7 +116,7 @@ jobs:
         run: |
           set +e
           terraform -chdir='${{ inputs.tf_directory }}' plan \
-            -var 'app_service_app_settings=${{ secrets.app_service_app_settings }}'' \
+            -var 'app_service_app_settings=${{ secrets.app_service_app_settings }}' \
             -detailed-exitcode \
             -out=tfplan
           exitcode=$?
