@@ -115,34 +115,11 @@ jobs:
         id: plan_without_vars
         shell: pwsh
         run: |
-          # Capture Terraform plan output
-          $planOutput = terraform -chdir="${{ inputs.tf_directory }}" plan `
-            -var "app_service_app_settings=${{ secrets.app_service_app_settings }}"
-
-          # Write it for logs
-          Write-Host "Terraform plan output:"
-          Write-Host $planOutput
-
-          # Optionally save it as step output
-          $escaped = $planOutput -replace "`r","" -replace "`n","%0A"
-          echo "plan_output=$escaped" >> $env:GITHUB_OUTPUT
-
-
           # terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -out=tfplan
 
       - name: Check plan result by exitcode
         run: |
-          echo "Terraform plan output:"
-          echo "${{ steps.plan_without_vars.outputs.plan_output }}"
-
-          if [[ "${{ steps.plan_without_vars.outputs.plan_output }}" == *"Plan: 0 to add, 0 to change, 0 to destroy."* ]]; then
-            echo "No changes detected."
-            echo "HAS_CHANGES=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected."
-            echo "HAS_CHANGES=true" >> $GITHUB_ENV
-          fi
-          # echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.stdout }}"
+          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.exitcode }}"
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
