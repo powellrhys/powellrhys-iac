@@ -79,28 +79,41 @@ jobs:
       - name: Terraform Plan with var-file
         if: inputs.tf_vars_file_name != ''
         id: plan_with_vars
-        shell: pwsh
+        shell: bash
         run: |
-          $appSettings = '${{ secrets.app_service_app_settings }}'
+          set +e
+          terraform -chdir="${{ inputs.tf_directory }}" plan \
+            -var-file="${{ inputs.tf_vars_file_name }}" \
+            -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" \
+            -detailed-exitcode \
+            -out=tfplan
+          exitcode=$?
 
-          # Run the plan – no detailed exit code needed
-          terraform `
-            -chdir="${{ inputs.tf_directory }}" plan `
-            -var-file="${{ inputs.tf_vars_file_name }}" `
-            -var "app_service_app_settings=$appSettings" `
-            -out=tfplan | Out-Host
+          set -e
+          echo "Terraform exit code: $exitcode"
+
+          if [ "$exitcode" -eq 0 ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          elif [ "$exitcode" -eq 2 ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "Terraform plan failed with exit code $exitcode"
+            exit 1
+          fi
 
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
         id: plan_without_vars
         shell: bash
         run: |
-          set +e   # 👈 don't fail the step on nonzero exit
-          terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -detailed-exitcode -out=tfplan
+          set +e
+          terraform -chdir="${{ inputs.tf_directory }}" plan \
+            -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" \
+            -detailed-exitcode \
+            -out=tfplan
           exitcode=$?
 
-          set -e   # 👈 restore normal fail-on-error behavior
-
+          set -e
           echo "Terraform exit code: $exitcode"
 
           if [ "$exitcode" -eq 0 ]; then
