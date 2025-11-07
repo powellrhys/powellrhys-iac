@@ -113,11 +113,12 @@ jobs:
       - name: Terraform Plan without var-file
         if: inputs.tf_vars_file_name == ''
         id: plan_without_vars
-        shell: pwsh
+        shell: bash
         run: |
           set +e   # 👈 don't fail the step on nonzero exit
           terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -detailed-exitcode -out=tfplan
           exitcode=$?
+
           set -e   # 👈 restore normal fail-on-error behavior
 
           echo "Terraform exit code was: $exitcode"
