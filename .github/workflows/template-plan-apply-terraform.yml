@@ -115,7 +115,7 @@ jobs:
         id: plan_without_vars
         shell: pwsh
         run: |
-          # terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -out=tfplan
+          terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -out=tfplan
 
       - name: Check plan result by exitcode
         run: |
