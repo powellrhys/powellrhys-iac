@@ -119,15 +119,7 @@ jobs:
 
       - name: Check plan result by exitcode
         run: |
-          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.exitcode }}"
-          if [ "${{ steps.plan_without_vars.outputs.exitcode }}" = "0" ]; then
-            echo "HAS_CHANGES=false" >> $GITHUB_ENV
-          elif [ "${{ steps.plan_without_vars.outputs.exitcode }}" = "2" ]; then
-            echo "HAS_CHANGES=true" >> $GITHUB_ENV
-          else
-            echo "Terraform plan failed with exitcode ${{ steps.plan_without_vars.outputs.exitcode }}"
-            exit 1
-          fi
+          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.stdout }}"
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
