@@ -89,9 +89,9 @@ jobs:
         shell: bash
         run: |
           set +e
-          terraform -chdir="${{ inputs.tf_directory }}" plan \
-            -var-file="${{ inputs.tf_vars_file_name }}" \
-            -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" \
+          terraform -chdir='${{ inputs.tf_directory }}' plan \
+            -var-file='${{ inputs.tf_vars_file_name }}' \
+            -var 'app_service_app_settings=${{ secrets.app_service_app_settings }}' \
             -detailed-exitcode \
             -out=tfplan
           exitcode=$?
