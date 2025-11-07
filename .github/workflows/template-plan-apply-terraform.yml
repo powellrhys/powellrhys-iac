@@ -59,7 +59,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.6.2
-          terraform_wrapper: false
+          terraform_wrapper: true
 
       - name: Export Azure credentials for Terraform
         run: |
