@@ -119,7 +119,7 @@ jobs:
 
       - name: Check plan result by exitcode
         run: |
-          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.stdout }}"
+          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.exitcode }}"
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
