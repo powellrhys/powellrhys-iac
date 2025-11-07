@@ -121,22 +121,16 @@ jobs:
 
           set -e   # 👈 restore normal fail-on-error behavior
 
-          echo "Terraform exit code was: $exitcode"
+          echo "Terraform exit code: $exitcode"
 
-          # # Export the result to GitHub env for later steps
-          # if [ "$exitcode" -eq 0 ]; then
-          #   echo "HAS_CHANGES=false" >> $GITHUB_ENV
-          # elif [ "$exitcode" -eq 2 ]; then
-          #   echo "HAS_CHANGES=true" >> $GITHUB_ENV
-          # else
-          #   echo "Terraform plan failed with exit code $exitcode"
-          #   exit 1
-          # fi
-          # terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -out=tfplan
-
-      - name: Check plan result by exitcode
-        run: |
-          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.exitcode }}"
+          if [ "$exitcode" -eq 0 ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          elif [ "$exitcode" -eq 2 ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "Terraform plan failed with exit code $exitcode"
+            exit 1
+          fi
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
