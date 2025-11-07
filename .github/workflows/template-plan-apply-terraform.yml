@@ -115,22 +115,19 @@ jobs:
         id: plan_without_vars
         shell: pwsh
         run: |
-          $appSettings = '${{ secrets.app_service_app_settings }}'
-          $tfDir = "${{ inputs.tf_directory }}"
+          terraform -chdir="${{ inputs.tf_directory }}" plan -var "app_service_app_settings=${{ secrets.app_service_app_settings }}" -detailed-exitcode -out=tfplan
 
-          # Run Terraform plan; suppress warnings from stderr
-          terraform -chdir="$tfDir" plan -var "app_service_app_settings=$appSettings" -detailed-exitcode -out=tfplan
-          # $exitCode = $LASTEXITCODE
-
-          # Write-Host "Terraform plan exit code: $exitCode"
-
-          # if ($exitCode -eq 0) {
-          #     echo "HAS_CHANGES=false" >> $env:GITHUB_ENV
-          # } elseif ($exitCode -eq 2) {
-          #     echo "HAS_CHANGES=true" >> $env:GITHUB_ENV
-          # } else {
-          #     throw "Terraform plan failed with exit code $exitCode"
-          # }
+      - name: Check plan result by exitcode
+        run: |
+          echo "Terraform exitcode was ${{ steps.plan_without_vars.outputs.exitcode }}"
+          if [ "${{ steps.plan_without_vars.outputs.exitcode }}" = "0" ]; then
+            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+          elif [ "${{ steps.plan_without_vars.outputs.exitcode }}" = "2" ]; then
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          else
+            echo "Terraform plan failed with exitcode ${{ steps.plan_without_vars.outputs.exitcode }}"
+            exit 1
+          fi
 
       - name: Terraform Apply (if enabled)
         if: ${{ inputs.should_apply == 'true' }}
