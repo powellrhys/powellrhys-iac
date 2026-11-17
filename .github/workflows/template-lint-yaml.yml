@@ -12,7 +12,7 @@ on:
 jobs:
   yamllint:
     name: Lint YAML files
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       # Checkout repository code
